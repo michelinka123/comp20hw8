@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Calendar API</title>
+	<style type="text/css">
+		div, h1
+		{
+			font-family: "Gill Sans", sans-serif;
+		}
+		div
+		{
+			font-size:20px;
+		}
+		h1
+		{
+			color:blue;
+		}
+	</style>
+	<meta charset="utf-8"/>
+	<script>
+		function getHolidays() 
+		{
+			/* Step 1: Make instance of request object*/
+			request = new XMLHttpRequest();
+			console.log("1 - request object created");
+ 
+			// Step 2: Set URL for the AJAX request to be API base + 
+			// /holidays endpoint + account key + Holiday parameters: api_key, country, year, type
+			// to get data for 2021 national holidays in the US
+ 
+		request.open("GET", "https://calendarific.com/api/v2/holidays?api_key=82fd22dda47e1fbe1ab9e25b424fa3ffb0e4747f&country=US&year=2021&type=national", true)
+
+			console.log("2 - opened request file");
+ 
+			// Step 3: set up event handler/callback
+
+			request.onreadystatechange = function() 
+			{
+				console.log("3 - readystatechange event fired.");
+ 
+				if (request.readyState == 4 && request.status == 200) {
+
+					// Step 5: wait for done + success
+					console.log("5 - response received");
+					result = request.responseText;
+					alert(result);
+					holidays = JSON.parse(result);
+					// alert(typeof(holidays));
+
+					document.getElementById("data").innerHTML = "<strong>" + "US National Holidays in 2021: " + "</strong>" + "<br>" + "<br>";
+					for (var i = 0; i < holidays.response.holidays.length; i++)
+					{
+						document.getElementById("data").innerHTML += holidays.response.holidays[i].name + "<br>";
+					}	
+				}
+				else if (request.readyState == 4 && request.status != 200) 
+				{
+					document.getElementById("data").innerHTML = "Something is wrong! Check logs";
+				}
+
+				else if (request.readyState == 3) 
+				{
+					document.getElementById("data").innerHTML = "Too soon! Try again";
+				}
+
+			}
+
+		// Step 4: fire off HTTP request
+			request.send();
+			console.log("4 - Request sent");
+		}
+	</script>
+</head>
+
+
+<body onload="getHolidays()">
+
+	<h1>Calendarific Holidays</h1>
+	<div id="data">Loading...</div>
+</body>
+</html>
